@@ -1,6 +1,6 @@
 @extends('layouts.default')
 
-@section('title', 'Cadastro de Departamento - SISRH ')
+@section('title', 'SISRH - Cadastro de Departamento')
 
 @section('content')
     <h1 class="fs-2 mb-3">Alterar Departamento</h1>

@@ -1,6 +1,6 @@
 @extends('layouts.default')
 
-@section('title', 'Cadastro de Usuário - SISRH ')
+@section('title', ' SISRH - Cadastro de Usuário')
 
 @section('content')
     <h1 class="fs-2 mb-3">Alterar Usuário</h1>
