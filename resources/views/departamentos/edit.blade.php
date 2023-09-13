@@ -9,7 +9,7 @@
         @csrf
         @method('PUT')
         @include('departamentos.partials.form')
-        <div class="col-12">
+        <div class="col-13">
           <button type="submit" class="btn btn-primary">Cadastrar</button>
           <a href="{{ route('departamentos.index') }}" class="btn btn-danger">Cancelar</a>
         </div>
