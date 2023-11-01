@@ -7,35 +7,29 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function index()
-    {
-
+    public function index(){
         return view('login.index');
-
     }
 
     public function auth(Request $request)
     {
-        $credencias = $request->validate([
-
-        
-            'email' => ['required','email'],
+      $credenciais = $request->validate([
+            'email' => ['required', 'email'],
             'password' => ['required']
         ],
-        [
-        'email.required'=>'Campo e-mail é obrigatório',
-        'email.email'=>'E-mail não é valido',
-        'password.required' => 'Campo senha é obrigatório'
 
+        [
+            'email.required' => 'O campo e-mail é obrigatorio',
+            'email.email' => 'O e-mail não é valido',
+            'password.required' => 'O campo senha nao é valido'
         ]);
 
-        if (Auth::attempt($credencias)){
-            $request -> session()->regenerate();
+
+        if(Auth::attempt($credenciais)){
+            $request->session()->regenerate();
             return redirect()->route('funcionarios.index');
-        } else {
-
-        return redirect()->back()->with('erro','E-mail ou senha inválida');
-
+        }else{
+            return redirect()->back()->with('erro', 'E-mail ou senha inválidos');
         }
     }
 

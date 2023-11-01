@@ -7,6 +7,7 @@ use App\Http\Controllers\FuncionarioController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UsuarioController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -40,9 +41,9 @@ Route::post('/departamentos', [DepartamentoController::class, 'store'])->name('d
 Route::get('/departamentos/{id}/edit', [DepartamentoController::class, 'edit'])->name('departamentos.edit');
 Route::put('/departamentos/{id}', [DepartamentoController::class, 'update'])->name('departamentos.update');
 Route::delete('/departamentos/{id}', [DepartamentoController::class, 'destroy'])->name('departamentos.destroy');
-Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
-Route::get('/usuarios/create', [UsuarioController::class, 'create'])->name('usuarios.create');
-Route::post('/usuarios', [UsuarioController::class, 'store'])->name('usuarios.store');
-Route::get('/usuarios/{id}/edit', [UsuarioController::class, 'edit'])->name('usuarios.edit');
-Route::put('/usuarios/{id}', [UsuarioController::class, 'update'])->name('usuarios.update');
-Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
+Route::get('/users', [UsuarioController::class, 'index'])->name('users.index');
+Route::get('users/create', [UsuarioController::class, 'create'])->name('users.create');
+Route::post('/users', [UsuarioController::class, 'store'])->name('users.store');
+Route::get('/users/{id}/edit', [UsuarioController::class, 'edit'])->name('users.edit');
+Route::put('/users/{id}', [UsuarioController::class, 'update'])->name('users.update');
+Route::delete('/users/{id}', [UsuarioController::class, 'destroy'])->name('users.destroy');

@@ -14,7 +14,7 @@ class UsuarioController extends Controller
     {
         $usuarios = User::all()->sortBy('name');
 
-        return view('usuarios.index', compact('usuarios'));
+        return view('users.index', compact('usuarios'));
     }
 
     /**
@@ -22,7 +22,7 @@ class UsuarioController extends Controller
      */
     public function create()
     {
-        return view('usuarios.create');
+        return view('users.create');
     }
 
     /**
@@ -37,7 +37,7 @@ class UsuarioController extends Controller
         // Insert de dados do usuário no banco
         User::create($input);
 
-        return redirect()->route('usuarios.index')->with('sucesso','Usuário Cadastrado com Sucesso');
+        return redirect()->route('users.index')->with('sucesso','Usuário Cadastrado com Sucesso');
     }
 
     /**
@@ -59,7 +59,7 @@ class UsuarioController extends Controller
             return back();
         }
 
-        return view('usuarios.edit', compact('usuario'));
+        return view('users.edit', compact('usuario'));
     }
 
     /**
@@ -80,7 +80,7 @@ class UsuarioController extends Controller
 
         $usuario->fill($input);
         $usuario->save();
-        return redirect()->route('usuarios.index')->with('Sucesso', 'Usuário alterado com sucesso!');
+        return redirect()->route('users.index')->with('Sucesso', 'Usuário alterado com sucesso!');
     }
 
     /**
@@ -92,6 +92,6 @@ class UsuarioController extends Controller
 
         $usuario->delete();
 
-        return redirect()->route('usuarios.index')->with('sucesso', 'Usuário excluido com sucesso.');
+        return redirect()->route('users.index')->with('sucesso', 'Usuário excluido com sucesso.');
     }
 }
