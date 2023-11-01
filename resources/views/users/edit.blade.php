@@ -8,7 +8,7 @@
     <form class="row g-3" method="POST" action="{{ route('users.update', $usuario->id) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
-        @include('usuarios.partials.form')
+        @include('users.partials.form')
         <div class="col-12">
           <button type="submit" class="btn btn-primary">Cadastrar</button>
           <a href="{{ route('users.index') }}" class="btn btn-danger">Cancelar</a>
