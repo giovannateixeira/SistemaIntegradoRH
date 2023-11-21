@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Beneficio;
 use App\Models\Departamento;
 use App\Models\Cargo;
 use App\Models\Funcionario;
@@ -11,6 +12,12 @@ use Intervention\Image\Facades\Image;
 
 class FuncionarioController extends Controller
 {
+    /* Verificar se o usuário estar logado no sistema */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -32,7 +39,8 @@ class FuncionarioController extends Controller
         //Retornar o formulário do Cadastro de funcionário
         $departamentos = Departamento::all()->sortBy('nome');
         $cargos = Cargo::all()->sortBy('descricao');
-        return view('funcionarios.create', compact('departamentos','cargos'));
+        $beneficios = Beneficio::where('status','on')->orderby('descricao')->get();
+        return view('funcionarios.create', compact('departamentos','cargos','beneficios'));
     }
 
     /**
@@ -43,14 +51,18 @@ class FuncionarioController extends Controller
         $input = $request->toArray();
         // dd($input);
 
-        $input['user_id'] = 1;
+        $input['user_id'] = auth()->user()->id;
 
         if($request->hasFile('foto')) {
             $input['foto'] = $this->uploadFoto($request->foto);
         }
 
         // Insert de dados do usuário no banco
-        Funcionario::create($input);
+        $funcionario = Funcionario::create($input);
+
+        if($request->beneficios){
+            $funcionario->beneficios()->attach($request->beneficios);
+        }
 
         return redirect()->route('funcionarios.index')->with('sucesso','Funcionário Cadastrado com Sucesso');
     }
@@ -89,8 +101,16 @@ class FuncionarioController extends Controller
 
         $departamentos = Departamento::all()->sortBy('nome');
         $cargos = Cargo::all()->sortBy('descricao');
+        $beneficios = Beneficio::where('status','on')->orderby('descricao')->get();
 
-        return view('funcionarios.edit', compact('funcionario', 'departamentos', 'cargos'));
+        $beneficio_selecionados = [];
+
+        foreach($funcionario->beneficios as $beneficio_selecionado){
+            $beneficio_selecionados[] = $beneficio_selecionado->id;
+        }
+
+        //dd($funcionario);
+        return view('funcionarios.edit', compact('funcionario', 'departamentos', 'cargos', 'beneficios', 'beneficio_selecionados'));
     }
 
     /**
@@ -107,9 +127,13 @@ class FuncionarioController extends Controller
             $input['foto'] = $this->uploadFoto($request->foto);
         }
 
+        if($request->beneficios){
+            $funcionario->beneficios()->sync($input['beneficios']);
+        }
+
         $funcionario->fill($input);
         $funcionario->save();
-        return redirect()->route('funcionarios.index')->with('Sucesso', 'Funcionário alterado com sucesso!');
+        return redirect()->route('funcionarios.index')->with('sucesso', 'Funcionário alterado com sucesso!');
     }
 
     /**

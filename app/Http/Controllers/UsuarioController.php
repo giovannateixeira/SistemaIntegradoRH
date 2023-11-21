@@ -4,17 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class UsuarioController extends Controller
 {
+    /* Verificar se o usuário estar logado no sistema */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
      /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $usuarios = User::all()->sortBy('name');
+        /* Verifica se o usuário tem permissão */
+        if(Gate::allows('tipo_usuario')){
+            $usuarios = User::where('name', 'like', '%'.$request->busca.'%')->orderby('name', 'asc')->paginate(3);
 
-        return view('users.index', compact('usuarios'));
+            $totalUsuarios = User::all()->count();
+
+            // Receber os dados do banco através do model
+            return view('usuarios.index', compact('usuarios', 'totalUsuarios'));
+        } else {
+            return back();
+        }
     }
 
     /**
@@ -22,7 +37,12 @@ class UsuarioController extends Controller
      */
     public function create()
     {
-        return view('users.create');
+        if(Gate::allows('tipo_usuario')){
+            //Retornar o formulário do Cadastro de Usuario
+            return view('usuarios.create');
+        } else {
+            return back();
+        }
     }
 
     /**
@@ -30,14 +50,18 @@ class UsuarioController extends Controller
      */
     public function store(Request $request)
     {
-        $input = $request->toArray(); //Array que recebe os valores dos campos da view através do objeto request
+        if(Gate::allows('tipo_usuario')){
+            $input = $request->toArray(); //Array que recebe os valores dos campos da view através do objeto request
 
-        $input['password'] = bcrypt($input['password']); // Linha que criptografa a senha do usuário com o método bcrypt, antes de guardar no banco
+            $input['password'] = bcrypt($input['password']); // Linha que criptografa a senha do usuário com o método bcrypt, antes de guardar no banco
 
-        // Insert de dados do usuário no banco
-        User::create($input);
+            // Insert de dados do usuário no banco
+            User::create($input);
 
-        return redirect()->route('users.index')->with('sucesso','Usuário Cadastrado com Sucesso');
+            return redirect()->route('usuarios.index')->with('sucesso','Usuário Cadastrado com Sucesso');
+        } else {
+            return back();
+        }
     }
 
     /**
@@ -59,7 +83,12 @@ class UsuarioController extends Controller
             return back();
         }
 
-        return view('users.edit', compact('usuario'));
+        if(auth()->user()->id == $usuario['id'] || auth()->user()->tipo == 'admin'){
+            return view('usuarios.edit', compact('usuario'));
+        } else {
+            return back();
+        }
+
     }
 
     /**
@@ -80,7 +109,12 @@ class UsuarioController extends Controller
 
         $usuario->fill($input);
         $usuario->save();
-        return redirect()->route('users.index')->with('Sucesso', 'Usuário alterado com sucesso!');
+
+        if($usuario->tipo == "admin"){
+            return redirect()->route('usuarios.index')->with('sucesso', 'Usuário alterado com sucesso!');
+        } else {
+            return redirect()->route('usuarios.edit', $usuario->id)->with('sucesso', 'Usuário alterado com sucesso!');
+        }
     }
 
     /**
@@ -89,9 +123,11 @@ class UsuarioController extends Controller
     public function destroy(string $id)
     {
         $usuario = User::find($id);
+        // dd($funcionario);
 
+        //Apagando o registro no banco de dados
         $usuario->delete();
 
-        return redirect()->route('users.index')->with('sucesso', 'Usuário excluido com sucesso.');
+        return redirect()->route('usuarios.index')->with('sucesso', 'Usuário excluido com sucesso.');
     }
 }
